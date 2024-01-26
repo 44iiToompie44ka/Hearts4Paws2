@@ -14,7 +14,7 @@ class PetRegistrationScreen extends StatefulWidget {
 class _PetRegistrationScreenState extends State<PetRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
-  int _age = 0;
+  final _ageController = TextEditingController();
   final _descController = TextEditingController();
   File? _image;
 
@@ -32,7 +32,7 @@ class _PetRegistrationScreenState extends State<PetRegistrationScreen> {
         await FirebaseFirestore.instance.collection('pets').add({
           'type': _selectedType,
           'name': _nameController.text,
-          'age': _age,
+          'age': double.tryParse(_ageController.text) ?? 0.0,
           'desc': _descController.text,
           'image': imageUrl, // Store the image URL in the same document
         });
@@ -40,8 +40,8 @@ class _PetRegistrationScreenState extends State<PetRegistrationScreen> {
         // Clear form fields
         _selectedType = ''; // Clear selected type
         _nameController.clear();
+        _ageController.clear();
         _descController.clear();
-        _age = 0;
 
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
@@ -147,20 +147,16 @@ class _PetRegistrationScreenState extends State<PetRegistrationScreen> {
                   return null;
                 },
               ),
-              Row(
-                children: [
-                  Text('Age: $_age'),
-                  Slider(
-                    value: _age.toDouble(),
-                    onChanged: (value) {
-                      setState(() {
-                        _age = value.round();
-                      });
-                    },
-                    min: 0,
-                    max: getMaxAgeForType(_selectedType).toDouble(),
-                  ),
-                ],
+              TextFormField(
+                controller: _ageController,
+                keyboardType: TextInputType.numberWithOptions(decimal: true),
+                decoration: InputDecoration(labelText: 'Age'),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the age';
+                  }
+                  return null;
+                },
               ),
               TextFormField(
                 controller: _descController,
@@ -182,24 +178,5 @@ class _PetRegistrationScreenState extends State<PetRegistrationScreen> {
         ),
       ),
     );
-  }
-
-  double getMaxAgeForType(String type) {
-    switch (type.toLowerCase()) {
-      case 'cat':
-        return 20; // Cats can live up to 20 years or more.
-      case 'dog':
-        return 15; // Dogs have a wide range of lifespans, but 15 is a common maximum.
-      case 'hamster':
-        return 3; // Hamsters typically live around 2 to 3 years.
-      case 'rat':
-        return 4; // Rats generally live 2 to 4 years.
-      case 'turtle':
-        return 100; // Turtles can have very long lifespans, some exceeding 100 years.
-      case 'fish':
-        return 30; // Some fish species, like Koi, can live for several decades.
-      default:
-        return 10; // Default maximum age for unknown types.
-    }
   }
 }
