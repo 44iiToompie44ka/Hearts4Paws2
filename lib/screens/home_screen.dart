@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:heartforpaw/cards/card_info.dart';
@@ -41,12 +42,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Bottom Navigation App'),
-      ),
       body: Column(
         children: [
-          _buildFilterButtons(), // Display filter buttons
+          Container(
+            padding: EdgeInsets.only(top: 50.0), // Add space from the top
+            child: _buildFilterButtons(), // Display filter buttons at the top
+          ),
           Expanded(
             child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
               stream: (selectedType == 'All')
@@ -87,7 +88,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget _buildFilterButtons() {
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
-      padding: EdgeInsets.all(10),
+      padding: EdgeInsets.all(5),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -99,6 +100,8 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildFilterButton(String filter) {
+    bool isActive = selectedType == filter;
+
     return ElevatedButton(
       onPressed: () {
         setState(() {
@@ -106,16 +109,19 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       },
       style: ElevatedButton.styleFrom(
-        primary: (selectedType == filter)
-            ? Theme.of(context)
-                .primaryColor // Use primary color for selected filter
-            : null,
+        primary: isActive ? Theme.of(context).colorScheme.secondary : null,
+        onPrimary: isActive ? Colors.white : null,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(20.0),
         ),
         elevation: 5.0,
       ),
-      child: Text(filter),
+      child: Text(
+        filter,
+        style: TextStyle(
+          color: isActive ? Colors.white : null,
+        ),
+      ),
     );
   }
 
@@ -128,9 +134,10 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => const InfoPet(
-                      petId: '',
-                    )),
+              builder: (context) => const InfoPet(
+                petId: '',
+              ),
+            ),
           );
         },
         child: Padding(
@@ -172,17 +179,22 @@ class _HomeScreenState extends State<HomeScreen> {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text(
+                        child: AutoSizeText(
                           doc?.get('name') ?? '',
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
-                            fontSize: 20.0,
+                            fontSize: 15.0,
                           ),
+                          maxLines:
+                              1, // Set the maximum number of lines before text scaling occurs
                         ),
                       ),
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 15.0),
-                        child: Text('${doc?.get('age')} лет'),
+                        child: AutoSizeText(
+                          '${doc?.get('age')} лет',
+                          maxLines: 1,
+                        ),
                       ),
                     ],
                   ),
