@@ -1,6 +1,11 @@
 {
+<<<<<<< HEAD
     "name": "heartforpaw",
     "short_name": "heartforpaw",
+=======
+    "name": "harboragekz",
+    "short_name": "harboragekz",
+>>>>>>> origin/main
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
