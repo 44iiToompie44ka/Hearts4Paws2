@@ -1,73 +1,93 @@
 import 'package:flutter/material.dart';
 import 'package:harboragekz/cards/chatAdopt.dart';
 
-class InfoPet extends StatelessWidget {
+class InfoPet extends StatefulWidget {
   const InfoPet({Key? key}) : super(key: key);
+
+  @override
+  _InfoPetState createState() => _InfoPetState();
+}
+
+class _InfoPetState extends State<InfoPet> {
+  bool _isContainerVisible = false;
+  bool _isTextExpanded = false;
+  bool _isFavoriteSelected = false;
+  String _petStory =
+      'Ray has a high level of intelligence and well-developed hunting skillsRay has a high level of intelligence and well-developed hunting skillsRay has a high level of intelligence and well-developed hunting skills';
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView(
-        physics: ClampingScrollPhysics(),
-        child: Stack(
-          children: [
-            Container(
-              width: double.infinity,
-              height: 400,
-              child: Stack(
-                children: [
-                  PageView(
-                    children: [
-                      Image.network(
-                        'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Zunge_raus.JPG/800px-Zunge_raus.JPG',
-                        fit: BoxFit.cover,
-                      ),
-                      Image.network(
-                        'https://via.placeholder.com/800x400', // Замените на URL вашего второго изображения
-                        fit: BoxFit.cover,
-                      ),
-                      Image.network(
-                        'https://via.placeholder.com/800x400', // Замените на URL вашего третьего изображения
-                        fit: BoxFit.cover,
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: IconButton(
-                  color: Colors.white,
-                  icon: Icon(Icons.arrow_back),
-                  iconSize: 30,
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-              ),
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: Stack(
+        children: [
+          Container(
+            width: double.infinity,
+            height: double.infinity,
+          ),
+          Container(
+            width: double.infinity,
+            height: 400,
+            child: PageView(
               children: [
-                Container(
-                  width: double.infinity,
-                  height: 350,
+                Image.network(
+                  'https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Zunge_raus.JPG/800px-Zunge_raus.JPG',
+                  fit: BoxFit.cover,
                 ),
-                SizedBox(height: 20.0),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  width: double.infinity,
-                  height: MediaQuery.of(context).size.height - 370,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(255, 255, 255, 255),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30),
-                      topRight: Radius.circular(30),
-                    ),
+                Image.network(
+                  'https://via.placeholder.com/800x400', // Replace with your second image URL
+                  fit: BoxFit.cover,
+                ),
+                Image.network(
+                  'https://via.placeholder.com/800x400', // Replace with your third image URL
+                  fit: BoxFit.cover,
+                ),
+              ],
+            ),
+          ),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: IconButton(
+                color: Colors.white,
+                icon: Icon(Icons.arrow_back),
+                iconSize: 30,
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ),
+          ),
+          AnimatedPositioned(
+            duration: Duration(milliseconds: 300),
+            curve: Curves.easeInOut,
+            top: _isContainerVisible ? 20 : 370,
+            bottom: 0,
+            left: 0,
+            right: 0,
+            child: GestureDetector(
+              onVerticalDragUpdate: (details) {
+                if (details.delta.dy < -10) {
+                  setState(() {
+                    _isContainerVisible = true;
+                  });
+                } else if (details.delta.dy > 10) {
+                  setState(() {
+                    _isContainerVisible = false;
+                  });
+                }
+              },
+              child: Container(
+                height: MediaQuery.of(context).size.height,
+                padding: EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 197, 161, 161),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(30),
+                    topRight: Radius.circular(30),
                   ),
-                  alignment: Alignment.topCenter,
+                ),
+                alignment: Alignment.topCenter,
+                child: SingleChildScrollView(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -89,12 +109,18 @@ class InfoPet extends StatelessWidget {
                             padding: const EdgeInsets.all(8.0),
                             child: IconButton(
                               icon: Icon(
-                                Icons.favorite_border,
-                                color: Colors.black,
+                                _isFavoriteSelected
+                                    ? Icons.favorite
+                                    : Icons.favorite_border,
+                                color: _isFavoriteSelected
+                                    ? Colors.red
+                                    : Colors.black,
                               ),
                               iconSize: 40,
                               onPressed: () {
-                                // Действие по нажатию на кнопку сердца
+                                setState(() {
+                                  _isFavoriteSelected = !_isFavoriteSelected;
+                                });
                               },
                             ),
                           ),
@@ -110,7 +136,7 @@ class InfoPet extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     '5 kg',
@@ -141,7 +167,7 @@ class InfoPet extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     '2 years',
@@ -163,8 +189,7 @@ class InfoPet extends StatelessWidget {
                               ),
                             ),
                           ),
-                          SizedBox(
-                              width: 10), // Пространство между контейнерами
+                          SizedBox(width: 10), // Space between containers
                           Expanded(
                             child: Container(
                               decoration: BoxDecoration(
@@ -173,7 +198,7 @@ class InfoPet extends StatelessWidget {
                               ),
                               padding: const EdgeInsets.all(16.0),
                               child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
                                   Text(
                                     'Black',
@@ -201,7 +226,7 @@ class InfoPet extends StatelessWidget {
                       Padding(
                         padding: const EdgeInsets.only(left: 8, right: 8),
                         child: Text(
-                          'Pet Stroy',
+                          'Pet Story',
                           style: TextStyle(
                             color: Colors.black,
                             fontSize: 20.0,
@@ -210,49 +235,75 @@ class InfoPet extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 10),
-                      Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          'Ray has a high level of intelligence and well-developed hunting skills, he deftly catches mice and toys, demonstrating his agility and traps. He loves cozy places to rest where he can relax and be alone with his fluid. Despite her individuality, Rei is always a loyal friend and companion who brings joy and comfort to her home.',
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontSize: 20.0,
-                          ),
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            _isTextExpanded = !_isTextExpanded;
+                          });
+                        },
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: _isTextExpanded
+                              ? Text(
+                                  _petStory,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20.0,
+                                  ),
+                                )
+                              : Text(
+                                  _petStory,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    color: Colors.black,
+                                    fontSize: 20.0,
+                                  ),
+                                ),
                         ),
                       ),
                     ],
                   ),
                 ),
-                Positioned(
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => ChatAdopt()),
-                      );
-                    },
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: Colors.black,
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      width: double.infinity,
-                      padding: const EdgeInsets.all(16.0),
-                      child: Center(
-                        child: Text(
-                          'Get Started',
-                          style: TextStyle(
-                            fontSize: 30,
-                          ),
-                        ),
+              ),
+            ),
+          ),
+          Positioned(
+            bottom: 10,
+            left: 0,
+            right: 0,
+            child: Container(
+              margin: EdgeInsets.all(15),
+              child: ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ChatAdopt()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  padding: EdgeInsets.all(10),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                ),
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(16.0),
+                  child: Center(
+                    child: Text(
+                      'Adopt',
+                      style: TextStyle(
+                        fontSize: 30,
                       ),
                     ),
                   ),
                 ),
-              ],
+              ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
