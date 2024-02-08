@@ -13,7 +13,7 @@ class _InfoPetState extends State<InfoPet> {
   bool _isTextExpanded = false;
   bool _isFavoriteSelected = false;
   String _petStory =
-      'Ray has a high level of intelligence and well-developed hunting skillsRay has a high level of intelligence and well-developed hunting skillsRay has a high level of intelligence and well-developed hunting skills';
+      'Ray has a high level of intelligence and well-developed hunting skills,Ray has a high level of intelligence and well-developed hunting skillsRay has a high level of intelligence and well-developed hunting skills';
 
   @override
   Widget build(BuildContext context) {
